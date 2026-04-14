@@ -13,6 +13,11 @@ Use the `Sync upstream` GitHub Actions workflow to fetch and merge `home-assista
 
 Open `Actions` -> `Sync upstream` -> `Run workflow`, then choose the target branch. The default branch should be `master`.
 
+Before running it, add a repository secret named `SYNC_UPSTREAM_TOKEN`:
+
+- classic PAT: grant `repo` and `workflow`
+- fine-grained PAT: grant repository `Contents: Read and write` and `Workflows: Read and write`
+
 The workflow will:
 
 - fetch upstream branches and tags

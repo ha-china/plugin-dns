@@ -22,11 +22,22 @@ jobs:
         with:
           ref: ${{ inputs.target_branch }}
           fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate push token
+        env:
+          SYNC_UPSTREAM_TOKEN: ${{ secrets.SYNC_UPSTREAM_TOKEN }}
+        run: |
+          if [ -z "$SYNC_UPSTREAM_TOKEN" ]; then
+            echo "SYNC_UPSTREAM_TOKEN is required to push branch and tags that may reference workflow changes."
+            exit 1
+          fi
 
       - name: Configure git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${{ secrets.SYNC_UPSTREAM_TOKEN }}@github.com/${{ github.repository }}.git"
 
       - name: Fetch upstream repository
         run: |
