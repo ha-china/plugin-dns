@@ -44,3 +44,7 @@ jobs:
       - name: Push merged branch
         run: |
           git push origin HEAD:${{ inputs.target_branch }}
+
+      - name: Push upstream tags
+        run: |
+          git push origin --tags
