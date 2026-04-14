@@ -1,0 +1,46 @@
+name: Sync upstream
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: Branch in this fork to receive upstream changes
+        required: true
+        default: master
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Merge upstream into fork branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v6.0.0
+        with:
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch upstream repository
+        run: |
+          if git remote get-url upstream; then
+            git remote set-url upstream https://github.com/home-assistant/plugin-dns.git
+          else
+            git remote add upstream https://github.com/home-assistant/plugin-dns.git
+          fi
+          git fetch upstream --tags
+
+      - name: Merge upstream master
+        run: |
+          git merge --no-ff -X ours upstream/master -m "Merge upstream/master into ${{ inputs.target_branch }}"
+
+      - name: Push merged branch
+        run: |
+          git push origin HEAD:${{ inputs.target_branch }}

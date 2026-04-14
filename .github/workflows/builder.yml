@@ -48,7 +48,6 @@ jobs:
       with:
         architectures: ${{ env.ARCHITECTURES }}
         image-name: ${{ env.IMAGE_NAME }}
-
   build:
     name: Build ${{ matrix.arch }} image
     needs: init
